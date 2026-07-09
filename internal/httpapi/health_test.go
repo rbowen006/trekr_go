@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetUp_Returns200(t *testing.T) {
-	server := testutil.NewTestServer(t)
+	server := testutil.NewTestServer(t, testutil.DefaultConfig())
 	t.Cleanup(server.Close)
 
 	resp, err := http.Get(server.URL + "/up")
