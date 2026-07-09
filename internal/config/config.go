@@ -11,6 +11,8 @@ type Config struct {
 	Port           string `env:"PORT" envDefault:"3000"`
 	AllowedOrigins string `env:"ALLOWED_ORIGINS" envDefault:"http://localhost:5173"`
 	DatabaseURL    string `env:"DATABASE_URL" envDefault:"postgres://postgres:password@localhost:5433/rv_marketplace_test"`
+	// SecretKeyBase signs JWTs; must equal Rails' SECRET_KEY_BASE for cross-backend tokens.
+	SecretKeyBase string `env:"SECRET_KEY_BASE"`
 }
 
 // Load reads configuration from the environment.

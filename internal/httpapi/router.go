@@ -30,6 +30,7 @@ func NewRouter(app *App) http.Handler {
 	r.Get("/up", healthHandler)
 	if app.DB != nil {
 		r.Post("/users", app.registerUser)
+		r.Post("/users/sign_in", app.signIn)
 	}
 	return r
 }
