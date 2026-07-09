@@ -29,5 +29,6 @@ func NewRouter(cfg config.Config) http.Handler {
 	r.Use(middleware.MalformedJSON)
 
 	r.Get("/up", healthHandler)
+	r.Post("/users", registerUserHandler)
 	return r
 }

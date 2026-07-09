@@ -14,7 +14,7 @@ Domain language: see `../rv_marketplace/CONTEXT.md`.
 
 ## Auth (PR #2–#5)
 
-- [ ] `POST /users` — registration
+- [x] `POST /users` — registration
 - [ ] `POST /users/sign_in` — JWT in `Authorization` header
 - [ ] `DELETE /users/sign_out`
 - [ ] Protected routes → 401 with JSend fail shape
