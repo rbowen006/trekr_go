@@ -37,5 +37,10 @@ jobs:
       - name: Run unit tests
         run: make test
 
+      # trekr_go never runs DDL; load the Rails schema snapshot so integration
+      # tests have real tables to hit against the fresh CI Postgres.
+      - name: Load Rails schema
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test/schema.sql
+
       - name: Run integration tests
         run: make test-integration

@@ -1,4 +1,4 @@
-.PHONY: test test-integration run run-worker sync-contract capture-golden tidy
+.PHONY: test test-integration run run-worker sync-contract capture-golden capture-schema tidy
 
 test:
 	go test ./...
@@ -21,6 +21,13 @@ sync-contract:
 
 capture-golden:
 	@echo "TODO: hit Rails API and refresh test/golden/*.golden.json"
+
+# Refresh test/schema.sql from the Rails test DB. trekr_go never runs DDL;
+# this dump only exists so CI can load the Rails schema into a fresh Postgres.
+capture-schema:
+	docker exec rv_marketplace-db-1 pg_dump -U postgres -d rv_marketplace_test \
+		--schema-only --no-owner --no-privileges \
+		| grep -vE '^\\(restrict|unrestrict)' > test/schema.sql
 
 tidy:
 	go mod tidy
