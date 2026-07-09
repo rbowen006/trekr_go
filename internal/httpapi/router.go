@@ -6,15 +6,14 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
-	"github.com/rbowen/trekr_go/internal/config"
 	"github.com/rbowen/trekr_go/internal/httpapi/middleware"
 )
 
 // NewRouter returns the application HTTP router with all routes registered.
-func NewRouter(cfg config.Config) http.Handler {
+func NewRouter(app *App) http.Handler {
 	r := chi.NewRouter()
 
-	origins := strings.Split(cfg.AllowedOrigins, ",")
+	origins := strings.Split(app.Config.AllowedOrigins, ",")
 	for i := range origins {
 		origins[i] = strings.TrimSpace(origins[i])
 	}
@@ -29,6 +28,8 @@ func NewRouter(cfg config.Config) http.Handler {
 	r.Use(middleware.MalformedJSON)
 
 	r.Get("/up", healthHandler)
-	r.Post("/users", registerUserHandler)
+	if app.DB != nil {
+		r.Post("/users", app.registerUser)
+	}
 	return r
 }
