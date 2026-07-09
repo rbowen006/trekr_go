@@ -10,9 +10,9 @@ import (
 )
 
 func TestCORSPreflight_ReturnsAllowedOrigin(t *testing.T) {
-	server := testutil.NewTestServer(t, config.Config{
+	server := testutil.NewTestServer(t, testutil.NewApp(config.Config{
 		AllowedOrigins: "http://localhost:5173",
-	})
+	}))
 	t.Cleanup(server.Close)
 
 	req, err := http.NewRequest(http.MethodOptions, server.URL+"/api/v1/listings", nil)
@@ -30,7 +30,7 @@ func TestCORSPreflight_ReturnsAllowedOrigin(t *testing.T) {
 }
 
 func TestCORSResponse_ExposesAuthorizationHeader(t *testing.T) {
-	server := testutil.NewTestServer(t, testutil.DefaultConfig())
+	server := testutil.NewTestServer(t, testutil.NewApp(testutil.DefaultConfig()))
 	t.Cleanup(server.Close)
 
 	req, err := http.NewRequest(http.MethodGet, server.URL+"/up", nil)

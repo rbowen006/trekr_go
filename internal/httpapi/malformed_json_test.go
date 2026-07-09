@@ -12,7 +12,7 @@ import (
 )
 
 func TestMalformedJSON_ApiEndpoint_ReturnsJSendFail(t *testing.T) {
-	server := testutil.NewTestServer(t, testutil.DefaultConfig())
+	server := testutil.NewTestServer(t, testutil.NewApp(testutil.DefaultConfig()))
 	t.Cleanup(server.Close)
 
 	resp := postMalformedJSON(t, server.URL+"/api/v1/listings/generate_description", `{"rv_type":"motorhome", BROKEN`)
@@ -21,7 +21,7 @@ func TestMalformedJSON_ApiEndpoint_ReturnsJSendFail(t *testing.T) {
 }
 
 func TestMalformedJSON_DeviseEndpoint_ReturnsJSendFail(t *testing.T) {
-	server := testutil.NewTestServer(t, testutil.DefaultConfig())
+	server := testutil.NewTestServer(t, testutil.NewApp(testutil.DefaultConfig()))
 	t.Cleanup(server.Close)
 
 	resp := postMalformedJSON(t, server.URL+"/users/sign_in", `{"user":{"email": BROKEN`)

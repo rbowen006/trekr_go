@@ -10,6 +10,7 @@ import (
 type Config struct {
 	Port           string `env:"PORT" envDefault:"3000"`
 	AllowedOrigins string `env:"ALLOWED_ORIGINS" envDefault:"http://localhost:5173"`
+	DatabaseURL    string `env:"DATABASE_URL" envDefault:"postgres://postgres:password@localhost:5433/rv_marketplace_test"`
 }
 
 // Load reads configuration from the environment.

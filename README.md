@@ -39,11 +39,17 @@ Same Postgres database, same port 3000, unchanged React frontend.
 ## Tests
 
 ```bash
-make test
+make test                 # unit tests (no database required)
+make test-integration     # HTTP + Postgres tests (requires rv_marketplace db on :5433)
 ```
 
-Tests use `test/testutil` to spin up the real router via `httptest`.
-Database helpers and golden-file assertions are added in later PRs.
+Integration tests use `rv_marketplace_test` and skip automatically when the database is unavailable.
+Start shared services first:
+
+```bash
+cd ../rv_marketplace
+docker compose up db redis ollama
+```
 
 ## Contract sync
 
