@@ -8,7 +8,8 @@ import (
 
 // Config holds runtime configuration loaded from environment variables.
 type Config struct {
-	Port string `env:"PORT" envDefault:"3000"`
+	Port           string `env:"PORT" envDefault:"3000"`
+	AllowedOrigins string `env:"ALLOWED_ORIGINS" envDefault:"http://localhost:5173"`
 }
 
 // Load reads configuration from the environment.

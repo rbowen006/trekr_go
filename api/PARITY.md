@@ -9,8 +9,8 @@ Domain language: see `../rv_marketplace/CONTEXT.md`.
 
 ## Middleware (PR #1)
 
-- [ ] CORS headers match Rails (`config/initializers/cors.rb`)
-- [ ] Malformed JSON → 400
+- [x] CORS headers match Rails (`config/initializers/cors.rb`)
+- [x] Malformed JSON → 400
 
 ## Auth (PR #2–#5)
 

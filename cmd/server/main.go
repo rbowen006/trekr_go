@@ -18,7 +18,7 @@ func main() {
 	addr := fmt.Sprintf(":%s", cfg.Port)
 	log.Printf("trekr_go listening on %s", addr)
 
-	if err := http.ListenAndServe(addr, httpapi.NewRouter()); err != nil {
+	if err := http.ListenAndServe(addr, httpapi.NewRouter(cfg)); err != nil {
 		log.Fatalf("server: %v", err)
 	}
 }
