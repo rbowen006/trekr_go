@@ -57,6 +57,15 @@ func SeedUser(t *testing.T, app *httpapi.App, email, password string) *models.Us
 	return user
 }
 
+// AuthHeader returns a "Bearer <token>" header value for the given user, signed
+// with the app's configured secret.
+func AuthHeader(t *testing.T, app *httpapi.App, user *models.User) string {
+	t.Helper()
+	token, err := auth.IssueToken(app.Config.SecretKeyBase, user.ID)
+	require.NoError(t, err)
+	return "Bearer " + token
+}
+
 // OpenTestDB connects to the test database, skipping when unavailable.
 func OpenTestDB(t *testing.T) *gorm.DB {
 	t.Helper()

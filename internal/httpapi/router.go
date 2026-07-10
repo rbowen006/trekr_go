@@ -28,9 +28,20 @@ func NewRouter(app *App) http.Handler {
 	r.Use(middleware.MalformedJSON)
 
 	r.Get("/up", healthHandler)
+	r.Delete("/users/sign_out", app.signOut)
 	if app.DB != nil {
 		r.Post("/users", app.registerUser)
 		r.Post("/users/sign_in", app.signIn)
+
+		// All /api/v1 endpoints require authentication. Concrete routes land
+		// in later PRs; the catch-all keeps the auth boundary deterministic so
+		// unauthenticated requests get a JSend 401 rather than a bare 404.
+		r.Route("/api/v1", func(r chi.Router) {
+			r.Use(middleware.RequireAuth(app.Config.SecretKeyBase, app.DB))
+			r.HandleFunc("/*", func(w http.ResponseWriter, _ *http.Request) {
+				http.Error(w, "not found", http.StatusNotFound)
+			})
+		})
 	}
 	return r
 }
