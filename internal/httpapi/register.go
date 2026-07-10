@@ -49,7 +49,7 @@ func (app *App) registerUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := models.User{
-		Email:             strings.TrimSpace(req.User.Email),
+		Email:             normalizeEmail(req.User.Email),
 		Name:              strings.TrimSpace(req.User.Name),
 		EncryptedPassword: hash,
 	}
@@ -98,6 +98,12 @@ func isDuplicateEmailError(err error) bool {
 	return strings.Contains(err.Error(), "duplicate key") ||
 		strings.Contains(err.Error(), "unique constraint") ||
 		strings.Contains(err.Error(), "idx_users_on_email")
+}
+
+// normalizeEmail matches Devise's case_insensitive_keys/strip_whitespace_keys
+// handling so registration and sign-in agree on the stored/looked-up value.
+func normalizeEmail(email string) string {
+	return strings.ToLower(strings.TrimSpace(email))
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"strings"
 
 	"github.com/rbowen/trekr_go/internal/auth"
 	"github.com/rbowen/trekr_go/internal/models"
@@ -30,7 +29,7 @@ func (app *App) signIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	email := strings.TrimSpace(strings.ToLower(req.User.Email))
+	email := normalizeEmail(req.User.Email)
 
 	var user models.User
 	err := app.DB.Where("email = ?", email).First(&user).Error
