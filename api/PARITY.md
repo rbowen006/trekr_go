@@ -18,8 +18,8 @@ Domain language: see `../rv_marketplace/CONTEXT.md`.
 - [x] `POST /users/sign_in` — JWT in `Authorization` header (PR #3)
 - [x] `DELETE /users/sign_out` (PR #4 — 204, tolerates malformed token)
 - [x] Protected routes → 401 with JSend fail shape (PR #4 — `/api/v1` auth gate)
-- [ ] `POST /users/password` — reset token create
-- [ ] `PUT /users/password` — reset token update
+- [x] `POST /users/password` — reset token create (PR #5)
+- [x] `PUT /users/password` — reset token update (PR #5)
 
 ## Listings (PR #6, #9)
 

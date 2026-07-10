@@ -32,6 +32,9 @@ func NewRouter(app *App) http.Handler {
 	if app.DB != nil {
 		r.Post("/users", app.registerUser)
 		r.Post("/users/sign_in", app.signIn)
+		r.Post("/users/password", app.createPasswordReset)
+		r.Put("/users/password", app.updatePasswordReset)
+		r.Patch("/users/password", app.updatePasswordReset)
 
 		// All /api/v1 endpoints require authentication. Concrete routes land
 		// in later PRs; the catch-all keeps the auth boundary deterministic so
