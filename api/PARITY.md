@@ -32,7 +32,8 @@ Domain language: see `../rv_marketplace/CONTEXT.md`.
 
 ## Active Storage (PR #8, #10)
 
-- [ ] `GET /rails/active_storage/blobs/redirect/:signed_id/:filename`
+- [x] `GET /rails/active_storage/blobs/redirect/:signed_id/:filename` (PR #8)
+- [x] `GET /rails/active_storage/disk/:encoded_key/:filename` — disk serve (PR #8)
 - [ ] Image upload on listing create/update
 - [ ] Image delete
 

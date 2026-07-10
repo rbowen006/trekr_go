@@ -36,6 +36,11 @@ func NewRouter(app *App) http.Handler {
 		r.Put("/users/password", app.updatePasswordReset)
 		r.Patch("/users/password", app.updatePasswordReset)
 
+		// Active Storage read path (public, like Rails): permanent signed blob
+		// URLs redirect to expiring disk-service URLs that serve file bytes.
+		r.Get("/rails/active_storage/blobs/redirect/*", app.blobRedirect)
+		r.Get("/rails/active_storage/disk/*", app.diskShow)
+
 		// All /api/v1 endpoints require authentication. Concrete routes land
 		// in later PRs; the catch-all keeps the auth boundary deterministic so
 		// unauthenticated requests get a JSend 401 rather than a bare 404.
