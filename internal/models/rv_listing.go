@@ -39,3 +39,18 @@ func RvTypeName(rvType int) string {
 		return ""
 	}
 }
+
+// RvTypeValue maps a Rails rv_type enum name to its integer, reporting whether
+// the name is a valid enum member (the inverse of RvTypeName).
+func RvTypeValue(name string) (int, bool) {
+	switch name {
+	case "caravan":
+		return 0, true
+	case "motorhome":
+		return 1, true
+	case "camper_trailer":
+		return 2, true
+	default:
+		return 0, false
+	}
+}
