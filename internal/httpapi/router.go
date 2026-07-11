@@ -46,12 +46,21 @@ func NewRouter(app *App) http.Handler {
 			r.Get("/listings", app.listingsIndex)
 			r.Get("/listings/{id}", app.listingsShow)
 
-			// Everything else under /api/v1 requires authentication. Concrete
-			// routes land in later PRs; the catch-all keeps the auth boundary
-			// deterministic so unauthenticated requests get a JSend 401 rather
-			// than a bare 404.
+			// Everything else under /api/v1 requires authentication. The
+			// catch-all keeps the auth boundary deterministic so unauthenticated
+			// requests to unmapped routes get a JSend 401 rather than a bare 404.
 			r.Group(func(r chi.Router) {
 				r.Use(middleware.RequireAuth(app.Config.SecretKeyBase, app.DB))
+
+				r.Get("/listings/mine", app.listingsMine)
+				r.Post("/listings", app.listingsCreate)
+				r.Put("/listings/{id}", app.listingsUpdate)
+				r.Patch("/listings/{id}", app.listingsUpdate)
+				r.Delete("/listings/{id}", app.listingsDestroy)
+
+				r.Post("/listings/{listing_id}/images", app.imagesCreate)
+				r.Delete("/listings/{listing_id}/images/{id}", app.imagesDestroy)
+
 				r.HandleFunc("/*", func(w http.ResponseWriter, _ *http.Request) {
 					http.Error(w, "not found", http.StatusNotFound)
 				})

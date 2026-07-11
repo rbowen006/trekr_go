@@ -25,17 +25,18 @@ Domain language: see `../rv_marketplace/CONTEXT.md`.
 
 - [x] `GET /api/v1/listings` (PR #6 — public, byte-parity vs Rails)
 - [x] `GET /api/v1/listings/:id` (PR #6 — public, byte-parity vs Rails)
-- [ ] `GET /api/v1/listings/mine`
-- [ ] `POST /api/v1/listings`
-- [ ] `PATCH /api/v1/listings/:id`
-- [ ] `DELETE /api/v1/listings/:id`
+- [x] `GET /api/v1/listings/mine` (PR #9 — auth, owner-scoped)
+- [x] `POST /api/v1/listings` (PR #9 — auth, region-on-save, ≥1 image, 422 msgs vs Rails)
+- [x] `PUT`/`PATCH /api/v1/listings/:id` (PR #9 — owner-only, region re-resolve, keeps images)
+- [x] `DELETE /api/v1/listings/:id` (PR #9 — owner-only, cascades dependents + purges images)
 
 ## Active Storage (PR #8, #10)
 
 - [x] `GET /rails/active_storage/blobs/redirect/:signed_id/:filename` (PR #8)
 - [x] `GET /rails/active_storage/disk/:encoded_key/:filename` — disk serve (PR #8)
-- [ ] Image upload on listing create/update
-- [ ] Image delete
+- [x] Image write path — blob (28-char base36 key, MD5 checksum, `local` service) + attachment rows + disk write (PR #9)
+- [x] `POST /api/v1/listings/:listing_id/images` — upload (PR #9, owner-only)
+- [x] `DELETE /api/v1/listings/:listing_id/images/:id` — purge blob + attachment + file (PR #9)
 
 ## Bookings (PR #11)
 
