@@ -41,13 +41,20 @@ func NewRouter(app *App) http.Handler {
 		r.Get("/rails/active_storage/blobs/redirect/*", app.blobRedirect)
 		r.Get("/rails/active_storage/disk/*", app.diskShow)
 
-		// All /api/v1 endpoints require authentication. Concrete routes land
-		// in later PRs; the catch-all keeps the auth boundary deterministic so
-		// unauthenticated requests get a JSend 401 rather than a bare 404.
 		r.Route("/api/v1", func(r chi.Router) {
-			r.Use(middleware.RequireAuth(app.Config.SecretKeyBase, app.DB))
-			r.HandleFunc("/*", func(w http.ResponseWriter, _ *http.Request) {
-				http.Error(w, "not found", http.StatusNotFound)
+			// Public reads (Rails skips authenticate_user! for these).
+			r.Get("/listings", app.listingsIndex)
+			r.Get("/listings/{id}", app.listingsShow)
+
+			// Everything else under /api/v1 requires authentication. Concrete
+			// routes land in later PRs; the catch-all keeps the auth boundary
+			// deterministic so unauthenticated requests get a JSend 401 rather
+			// than a bare 404.
+			r.Group(func(r chi.Router) {
+				r.Use(middleware.RequireAuth(app.Config.SecretKeyBase, app.DB))
+				r.HandleFunc("/*", func(w http.ResponseWriter, _ *http.Request) {
+					http.Error(w, "not found", http.StatusNotFound)
+				})
 			})
 		})
 	}
