@@ -52,6 +52,12 @@ Domain language: see `../rv_marketplace/CONTEXT.md`.
 - [ ] `GET /api/v1/chats/:id/messages`
 - [ ] `POST /api/v1/chats/:id/messages`
 
+## Region resolver (PR #7)
+
+- [x] `knowledge/regions.yml` copied from Rails (`make sync-contract`)
+- [x] `region.Resolve(town, state, postcode)` — mirrors `Region::Resolver.call` (exact-town match, file order)
+- [x] `region.Find(slug)` / manifest unique-town invariant (ADR-0013), verified vs real Rails
+
 ## Search & AI (PR #13–#15)
 
 - [ ] Embedding worker (asynq)
