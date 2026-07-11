@@ -40,11 +40,11 @@ Domain language: see `../rv_marketplace/CONTEXT.md`.
 
 ## Bookings (PR #11)
 
-- [ ] `POST /api/v1/bookings`
-- [ ] `GET /api/v1/bookings`
-- [ ] `GET /api/v1/bookings/:id`
-- [ ] `PATCH /api/v1/bookings/:id/confirm`
-- [ ] `PATCH /api/v1/bookings/:id/reject`
+- [x] `POST /api/v1/listings/:listing_id/bookings` (PR #11 — hirer-only, owner 403, overlap check under row lock)
+- [x] `GET /api/v1/bookings` (PR #11 — hires+owns, newest first, participant shape)
+- [x] `GET /api/v1/bookings/:id` (PR #11 — participants only, 404 non-participant, `trip_planning_available`)
+- [x] `PATCH /api/v1/bookings/:id/confirm` (PR #11 — listing owner only)
+- [x] `PATCH /api/v1/bookings/:id/reject` (PR #11 — listing owner only)
 
 ## Chats (PR #12)
 
