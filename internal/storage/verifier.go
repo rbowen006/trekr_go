@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -48,8 +49,31 @@ type BlobKeyData struct {
 	ServiceName string `json:"service_name"`
 }
 
+var (
+	secretCacheMu sync.RWMutex
+	secretCache   = map[string][]byte{}
+)
+
+// verifierSecret derives (and caches) the Active Storage HMAC key. The key
+// depends only on the constant secret_key_base, so deriving it once avoids
+// re-running PBKDF2 for every signed URL on a listings page.
 func verifierSecret(secretKeyBase string) ([]byte, error) {
-	return pbkdf2.Key(sha256.New, secretKeyBase, []byte(verifierSalt), verifierIterations, verifierKeyLen)
+	secretCacheMu.RLock()
+	cached, ok := secretCache[secretKeyBase]
+	secretCacheMu.RUnlock()
+	if ok {
+		return cached, nil
+	}
+
+	secret, err := pbkdf2.Key(sha256.New, secretKeyBase, []byte(verifierSalt), verifierIterations, verifierKeyLen)
+	if err != nil {
+		return nil, err
+	}
+
+	secretCacheMu.Lock()
+	secretCache[secretKeyBase] = secret
+	secretCacheMu.Unlock()
+	return secret, nil
 }
 
 // generate produces a MessageVerifier token: base64(json envelope)--hex(HMAC-SHA1).

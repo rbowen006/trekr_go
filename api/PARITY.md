@@ -23,8 +23,8 @@ Domain language: see `../rv_marketplace/CONTEXT.md`.
 
 ## Listings (PR #6, #9)
 
-- [ ] `GET /api/v1/listings`
-- [ ] `GET /api/v1/listings/:id`
+- [x] `GET /api/v1/listings` (PR #6 — public, byte-parity vs Rails)
+- [x] `GET /api/v1/listings/:id` (PR #6 — public, byte-parity vs Rails)
 - [ ] `GET /api/v1/listings/mine`
 - [ ] `POST /api/v1/listings`
 - [ ] `PATCH /api/v1/listings/:id`

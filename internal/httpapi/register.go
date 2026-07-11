@@ -107,7 +107,15 @@ func normalizeEmail(email string) string {
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
-	w.Header().Set("Content-Type", "application/json")
+	// json.Marshal matches Rails' render json: byte-for-byte — it HTML-escapes
+	// <, >, & (Rails escape_html_entities_in_json is true) and adds no trailing
+	// newline (unlike json.Encoder).
+	data, err := json.Marshal(v)
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(v)
+	_, _ = w.Write(data)
 }
