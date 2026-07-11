@@ -1,0 +1,84 @@
+# The Region vocabulary (ADR-0013). Single source of truth for the resolver,
+# the trip-planning coverage gate, and knowledge-chunk loading. Static reference
+# data, embedded at deploy time — deliberately a manifest, not a database table.
+#
+# Each region:
+#   slug:  stable identifier stored on rv_listings.region and knowledge_chunks.region
+#   name:  human label, also fed into the retrieval query
+#   state: the AU state it sits in
+#   towns: exact town names that resolve to this region
+#   doc:   markdown corpus file under app/knowledge/, or omitted if not yet authored
+- slug: great-ocean-road
+  name: Great Ocean Road
+  state: VIC
+  towns:
+    - Lorne
+    - Apollo Bay
+  doc: great-ocean-road.md
+- slug: byron-bay
+  name: Byron Bay
+  state: NSW
+  towns:
+    - Byron Bay
+  doc: byron-bay.md
+- slug: sydney
+  name: Sydney
+  state: NSW
+  towns:
+    - Sydney
+    - Bondi Beach
+  doc: sydney.md
+- slug: blue-mountains
+  name: Blue Mountains
+  state: NSW
+  towns:
+    - Katoomba
+  doc: blue-mountains.md
+- slug: newcastle
+  name: Newcastle
+  state: NSW
+  towns:
+    - Newcastle
+  doc: newcastle.md
+- slug: snowy-mountains
+  name: Snowy Mountains
+  state: NSW
+  towns:
+    - Thredbo
+  doc: snowy-mountains.md
+- slug: melbourne
+  name: Melbourne
+  state: VIC
+  towns:
+    - Melbourne
+  doc: melbourne.md
+- slug: noosa
+  name: Noosa
+  state: QLD
+  towns:
+    - Noosa Heads
+  doc: noosa.md
+- slug: tropical-north-queensland
+  name: Tropical North Queensland
+  state: QLD
+  towns:
+    - Port Douglas
+  doc: tropical-north-queensland.md
+- slug: red-centre
+  name: Red Centre
+  state: NT
+  towns:
+    - Alice Springs
+  doc: red-centre.md
+- slug: top-end
+  name: Top End
+  state: NT
+  towns:
+    - Darwin
+  doc: top-end.md
+- slug: margaret-river
+  name: Margaret River
+  state: WA
+  towns:
+    - Margaret River
+  doc: margaret-river.md
