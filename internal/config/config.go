@@ -15,6 +15,12 @@ type Config struct {
 	SecretKeyBase string `env:"SECRET_KEY_BASE"`
 	// StorageRoot is the Active Storage disk root (points at rv_marketplace/storage).
 	StorageRoot string `env:"STORAGE_ROOT"`
+	// OllamaURL is the base URL of the local Ollama server used for embeddings
+	// (ADR-0011). Host-facing default; docker sets http://ollama:11434.
+	OllamaURL string `env:"OLLAMA_URL" envDefault:"http://localhost:11434"`
+	// RedisURL backs the asynq job queue. Host-facing default; docker sets
+	// redis://redis:6379/0.
+	RedisURL string `env:"REDIS_URL" envDefault:"redis://localhost:6379/0"`
 }
 
 // Load reads configuration from the environment.

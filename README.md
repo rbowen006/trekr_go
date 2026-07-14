@@ -29,7 +29,19 @@ Same Postgres database, same port 3000, unchanged React frontend.
    make run
    ```
 
-4. Start the frontend (proxies to `:3000`):
+4. Run the background worker (processes embedding jobs; needs `redis` + `ollama`
+   from step 1):
+
+   ```bash
+   make run-worker
+   ```
+
+   Listing create/update enqueues a semantic-search embedding job (ADR-0011) via
+   asynq/Redis; the worker calls Ollama and writes `listing_embeddings`. The API
+   process still serves requests without the worker running — embeddings just
+   won't be generated until it is.
+
+5. Start the frontend (proxies to `:3000`):
 
    ```bash
    cd ../rv_marketplace/frontend

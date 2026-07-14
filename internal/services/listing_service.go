@@ -6,6 +6,7 @@ package services
 
 import (
 	"errors"
+	"log"
 	"os"
 
 	"github.com/rbowen/trekr_go/internal/models"
@@ -38,12 +39,33 @@ type ListingParams struct {
 	Longitude   *float64
 }
 
+// ListingEmbedQueue enqueues a listing-embed job. It is the seam for
+// RvListing's `after_commit :refresh_embedding` (ADR-0011); the asynq client
+// (internal/jobs) satisfies it, and tests substitute a fake. A nil queue skips
+// enqueuing (e.g. tests that don't exercise embeddings).
+type ListingEmbedQueue interface {
+	EnqueueListingEmbed(listingID int64) error
+}
+
 // ListingService owns listing create/update/destroy and image attachment,
 // including canonical region resolution (ADR-0013) and Active Storage writes.
 type ListingService struct {
 	DB          *gorm.DB
 	StorageRoot string
 	Regions     region.Manifest
+	Queue       ListingEmbedQueue
+}
+
+// refreshEmbedding enqueues a re-embed for the listing, mirroring RvListing's
+// after_commit callback. Best-effort: a queue error is logged, not surfaced, so
+// the write still succeeds (Rails swallows after_commit callback errors).
+func (s *ListingService) refreshEmbedding(listingID int64) {
+	if s.Queue == nil {
+		return
+	}
+	if err := s.Queue.EnqueueListingEmbed(listingID); err != nil {
+		log.Printf("failed to enqueue listing embed for %d: %v", listingID, err)
+	}
 }
 
 // Create builds, validates, and persists a listing owned by ownerID, attaching
@@ -74,6 +96,7 @@ func (s *ListingService) Create(ownerID int64, p ListingParams, images []Uploade
 	if err != nil {
 		return nil, nil, err
 	}
+	s.refreshEmbedding(listing.ID)
 	return listing, nil, nil
 }
 
@@ -89,6 +112,7 @@ func (s *ListingService) Update(listing *models.RvListing, p ListingParams) ([]s
 	if err := s.DB.Save(listing).Error; err != nil {
 		return nil, err
 	}
+	s.refreshEmbedding(listing.ID)
 	return nil, nil
 }
 

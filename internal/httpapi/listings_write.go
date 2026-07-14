@@ -25,6 +25,7 @@ func (app *App) listingService() *services.ListingService {
 		DB:          app.DB,
 		StorageRoot: app.Config.StorageRoot,
 		Regions:     regionsOnce(),
+		Queue:       app.EmbedQueue,
 	}
 }
 
