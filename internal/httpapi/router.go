@@ -61,6 +61,12 @@ func NewRouter(app *App) http.Handler {
 				r.Post("/listings/{listing_id}/images", app.imagesCreate)
 				r.Delete("/listings/{listing_id}/images/{id}", app.imagesDestroy)
 
+				r.Post("/listings/{listing_id}/bookings", app.bookingsCreate)
+				r.Get("/bookings", app.bookingsIndex)
+				r.Get("/bookings/{id}", app.bookingsShow)
+				r.Patch("/bookings/{id}/confirm", app.bookingsConfirm)
+				r.Patch("/bookings/{id}/reject", app.bookingsReject)
+
 				r.HandleFunc("/*", func(w http.ResponseWriter, _ *http.Request) {
 					http.Error(w, "not found", http.StatusNotFound)
 				})
