@@ -67,6 +67,12 @@ func NewRouter(app *App) http.Handler {
 				r.Patch("/bookings/{id}/confirm", app.bookingsConfirm)
 				r.Patch("/bookings/{id}/reject", app.bookingsReject)
 
+				r.Post("/listings/{listing_id}/chats", app.chatsCreate)
+				r.Get("/chats", app.chatsIndex)
+				r.Get("/chats/{id}", app.chatsShow)
+				r.Get("/chats/{chat_id}/messages", app.messagesIndex)
+				r.Post("/chats/{chat_id}/messages", app.messagesCreate)
+
 				r.HandleFunc("/*", func(w http.ResponseWriter, _ *http.Request) {
 					http.Error(w, "not found", http.StatusNotFound)
 				})
