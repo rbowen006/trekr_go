@@ -46,6 +46,12 @@ func NewRouter(app *App) http.Handler {
 			r.Get("/listings", app.listingsIndex)
 			r.Get("/listings/{id}", app.listingsShow)
 
+			// Public semantic search. OptionalAuth attributes the caller to the
+			// nl_search ai_requests row when a token is present, without
+			// requiring one (mirrors skip_before_action :authenticate_user!).
+			r.With(middleware.OptionalAuth(app.Config.SecretKeyBase, app.DB)).
+				Post("/listings/search", app.listingsSearch)
+
 			// Everything else under /api/v1 requires authentication. The
 			// catch-all keeps the auth boundary deterministic so unauthenticated
 			// requests to unmapped routes get a JSend 401 rather than a bare 404.
