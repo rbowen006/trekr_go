@@ -61,11 +61,11 @@ Domain language: see `../rv_marketplace/CONTEXT.md`.
 
 ## Search & AI (PR #13–#15)
 
-- [ ] Embedding worker (asynq)
+- [x] Embedding worker (asynq) — PR #13: `Ai::Embedder`→Ollama, idempotent embed task (content_hash), enqueue on listing create/update, `ai_requests` logging (ADR-0011)
 - [ ] `POST /api/v1/listings/search`
 - [ ] `POST /api/v1/listings/generate_description`
 - [ ] `POST /api/v1/chats/:id/suggest_reply`
-- [ ] AI rate limits + `ai_requests` logging
+- [ ] AI rate limits + `ai_requests` logging (chat/description features)
 
 ## Out of scope
 
