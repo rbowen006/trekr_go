@@ -23,28 +23,50 @@ const unauthenticatedMessage = "You need to sign in or sign up before continuing
 func RequireAuth(secret string, db *gorm.DB) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			token := bearerToken(r)
-			if token == "" {
+			user, ok := resolveUser(secret, db, r)
+			if !ok {
 				writeJSendFail(w, http.StatusUnauthorized, unauthenticatedMessage)
 				return
 			}
-
-			userID, err := auth.ParseToken(secret, token)
-			if err != nil {
-				writeJSendFail(w, http.StatusUnauthorized, unauthenticatedMessage)
-				return
-			}
-
-			var user models.User
-			if err := db.First(&user, userID).Error; err != nil {
-				writeJSendFail(w, http.StatusUnauthorized, unauthenticatedMessage)
-				return
-			}
-
-			ctx := context.WithValue(r.Context(), currentUserKey, &user)
+			ctx := context.WithValue(r.Context(), currentUserKey, user)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
+}
+
+// OptionalAuth loads the user into the request context when a valid Bearer
+// token is present, but never rejects the request. Public endpoints that still
+// attribute the caller when known (e.g. semantic search logging ai_requests)
+// use it, mirroring Warden running under Rails' skip_before_action.
+func OptionalAuth(secret string, db *gorm.DB) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if user, ok := resolveUser(secret, db, r); ok {
+				r = r.WithContext(context.WithValue(r.Context(), currentUserKey, user))
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+// resolveUser parses the request's Bearer token and loads the corresponding
+// user, reporting ok=false when the token is missing, invalid, or the user no
+// longer exists. Shared by RequireAuth (which rejects on !ok) and OptionalAuth
+// (which simply proceeds).
+func resolveUser(secret string, db *gorm.DB, r *http.Request) (*models.User, bool) {
+	token := bearerToken(r)
+	if token == "" {
+		return nil, false
+	}
+	userID, err := auth.ParseToken(secret, token)
+	if err != nil {
+		return nil, false
+	}
+	var user models.User
+	if err := db.First(&user, userID).Error; err != nil {
+		return nil, false
+	}
+	return &user, true
 }
 
 // CurrentUser returns the authenticated user stored by RequireAuth, if any.

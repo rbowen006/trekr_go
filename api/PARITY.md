@@ -62,7 +62,7 @@ Domain language: see `../rv_marketplace/CONTEXT.md`.
 ## Search & AI (PR #13–#15)
 
 - [x] Embedding worker (asynq) — PR #13: `Ai::Embedder`→Ollama, idempotent embed task (content_hash), enqueue on listing create/update, `ai_requests` logging (ADR-0011)
-- [ ] `POST /api/v1/listings/search`
+- [x] `POST /api/v1/listings/search` — PR #14: public NL search, pgvector cosine nearest-neighbours (limit 20), `score` per result, 422 blank / 503 embedder-down, `nl_search` ai_requests logging
 - [ ] `POST /api/v1/listings/generate_description`
 - [ ] `POST /api/v1/chats/:id/suggest_reply`
 - [ ] AI rate limits + `ai_requests` logging (chat/description features)
