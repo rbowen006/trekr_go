@@ -63,9 +63,9 @@ Domain language: see `../rv_marketplace/CONTEXT.md`.
 
 - [x] Embedding worker (asynq) — PR #13: `Ai::Embedder`→Ollama, idempotent embed task (content_hash), enqueue on listing create/update, `ai_requests` logging (ADR-0011)
 - [x] `POST /api/v1/listings/search` — PR #14: public NL search, pgvector cosine nearest-neighbours (limit 20), `score` per result, 422 blank / 503 embedder-down, `nl_search` ai_requests logging
-- [ ] `POST /api/v1/listings/generate_description`
-- [ ] `POST /api/v1/chats/:id/suggest_reply`
-- [ ] AI rate limits + `ai_requests` logging (chat/description features)
+- [x] `POST /api/v1/listings/generate_description` — PR #15: authed Claude call (anthropic-sdk-go), JSend success/fail/error mapping, `description_generator` ai_requests logging
+- [x] `POST /api/v1/chats/:id/suggest_reply` — PR #15: owner-only (404→403→422 order), Claude reply draft, `chat_reply` ai_requests logging
+- [x] AI rate limits + `ai_requests` logging (chat/description features) — PR #15: 10/hr per user, per feature; increments on admission (throttled never calls Claude); 429 JSend fail + `Retry-After`; Redis-backed (in-memory for tests)
 
 ## Out of scope
 

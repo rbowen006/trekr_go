@@ -5,10 +5,12 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/rbowen/trekr_go/internal/ai"
 	"github.com/rbowen/trekr_go/internal/config"
 	"github.com/rbowen/trekr_go/internal/db"
 	"github.com/rbowen/trekr_go/internal/httpapi"
 	"github.com/rbowen/trekr_go/internal/jobs"
+	"github.com/rbowen/trekr_go/internal/ratelimit"
 )
 
 func main() {
@@ -28,10 +30,18 @@ func main() {
 	}
 	defer func() { _ = queue.Close() }()
 
+	limiter, err := ratelimit.NewRedisLimiter(cfg.RedisURL)
+	if err != nil {
+		log.Fatalf("rate limiter: %v", err)
+	}
+	defer func() { _ = limiter.Close() }()
+
 	app := &httpapi.App{
 		Config:     cfg,
 		DB:         database,
 		EmbedQueue: queue,
+		Claude:     ai.NewClaude(database, cfg.AnthropicAPIKey, cfg.AnthropicBaseURL),
+		Limiter:    limiter,
 	}
 
 	addr := fmt.Sprintf(":%s", cfg.Port)
