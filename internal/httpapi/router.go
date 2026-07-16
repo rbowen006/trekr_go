@@ -3,10 +3,18 @@ package httpapi
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/rbowen/trekr_go/internal/httpapi/middleware"
+)
+
+// aiRateLimitWindow and aiRateLimit cap paid Claude calls at 10 per hour, per
+// user, per feature (ADR-0010) — one bucket for descriptions, one for replies.
+const (
+	aiRateLimitWindow = time.Hour
+	aiRateLimit       = 10
 )
 
 // NewRouter returns the application HTTP router with all routes registered.
@@ -78,6 +86,19 @@ func NewRouter(app *App) http.Handler {
 				r.Get("/chats/{id}", app.chatsShow)
 				r.Get("/chats/{chat_id}/messages", app.messagesIndex)
 				r.Post("/chats/{chat_id}/messages", app.messagesCreate)
+
+				// AI endpoints (PR #15). Each carries its own per-user, per-feature
+				// rate limit that increments on admission — so a throttled request
+				// never reaches Claude. The limiter falls back to in-memory when
+				// none is wired (tests/CI need no Redis).
+				limiter := app.Limiter
+				if limiter == nil {
+					limiter = middleware.NewMemoryRateLimiter()
+				}
+				r.With(middleware.RateLimit(limiter, "description_generator", aiRateLimit, aiRateLimitWindow)).
+					Post("/listings/generate_description", app.generateDescription)
+				r.With(middleware.RateLimit(limiter, "chat_reply", aiRateLimit, aiRateLimitWindow)).
+					Post("/chats/{chat_id}/suggest_reply", app.suggestReply)
 
 				r.HandleFunc("/*", func(w http.ResponseWriter, _ *http.Request) {
 					http.Error(w, "not found", http.StatusNotFound)

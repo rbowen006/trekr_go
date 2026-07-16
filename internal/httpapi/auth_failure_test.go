@@ -42,9 +42,10 @@ func TestProtectedApiRoute_Unauthenticated_ReturnsJSend401(t *testing.T) {
 	require.NotContains(t, body, "error")
 }
 
-// A valid token passes the /api/v1 auth gate. Concrete endpoints arrive in
-// later PRs, so for now an authenticated request falls through to 404 — the
-// point is that it is NOT rejected with 401.
+// A valid token passes the /api/v1 auth gate: an unmapped authed path falls
+// through to the group's 404 catch-all — the point is that it is NOT rejected
+// with 401. Uses a deliberately unmapped path so it stays a pure auth-gate probe
+// as concrete endpoints get implemented.
 func TestProtectedApiRoute_Authenticated_PassesAuthGate(t *testing.T) {
 	app := testutil.NewTestApp(t)
 	server := testutil.NewTestServer(t, app)
@@ -52,7 +53,7 @@ func TestProtectedApiRoute_Authenticated_PassesAuthGate(t *testing.T) {
 
 	user := testutil.SeedUser(t, app, fmt.Sprintf("apigate-%d@example.com", testutil.UniqueID()), "Password123!")
 
-	req, _ := http.NewRequest(http.MethodPost, server.URL+"/api/v1/listings/generate_description", strings.NewReader(`{"rv_type":"motorhome"}`))
+	req, _ := http.NewRequest(http.MethodPost, server.URL+"/api/v1/does_not_exist", strings.NewReader(`{}`))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", testutil.AuthHeader(t, app, user))
 	resp, err := http.DefaultClient.Do(req)
